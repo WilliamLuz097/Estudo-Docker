@@ -1,0 +1,44 @@
+# Define o nome da sua pipeline.
+name: Validação e Teste do Projeto
+
+# Define o gatilho. A pipeline será executada toda vez que houver
+# um novo 'push' para a branch 'main' ou um 'pull request'.
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+# Define os trabalhos (jobs) a serem executados.
+jobs:
+  # O nome deste trabalho específico.
+  build-and-test:
+    # O ambiente em que o trabalho será executado (Ubuntu mais recente).
+    runs-on: ubuntu-latest
+
+    # Os passos (steps) que o job vai seguir.
+    steps:
+      # Passo 1: Faz o "checkout" do código do seu repositório.
+      # Isso garante que a pipeline tenha acesso a todos os seus arquivos.
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      # Passo 2: Constrói e sobe os contêineres Docker usando o docker-compose.
+      # A flag '--build' força a reconstrução das imagens.
+      - name: Construir e iniciar os contêineres Docker
+        run: docker-compose up --build -d
+
+      # Passo 3 (Opcional): Executa testes.
+      # Este é um espaço reservado. Você pode adicionar comandos para rodar testes
+      # unitários ou de integração aqui.
+      - name: Executar testes de validação
+        run: |
+          echo "Rodando testes..."
+          # Exemplo: Comandos para rodar testes com PHPUnit ou qualquer outra ferramenta.
+          # docker-compose exec php-fpm vendor/bin/phpunit
+
+      # Passo 4: Limpa o ambiente.
+      # O comando 'docker-compose down' para e remove os contêineres e redes.
+      - name: Parar os contêineres
+        if: always()
+        run: docker-compose down
