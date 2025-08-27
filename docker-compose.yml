@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  nginx:
+    # Essa função usa a imagem 'nginx_base' criada no Dockerfile.
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: nginx_base
+    # Mapeia a porta 5700 do host para a porta 80 do contêiner.
+    ports:
+      - "5700:80"
+    # Compartilha o diretório './src' do meu projeto com o diretório web do contêiner.
+    volumes:
+      - ./src:/var/www/html
+    # Essa variável garante que o meu contêiner 'php' seja iniciado antes do 'nginx'.
+    depends_on:
+      - php
+  
+  php:
+    # Aqui eu uso a imagem 'php_base' criada no Dockerfile.
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: php_base
+    # Compartilhamento do diretório './src' com o contêiner PHP.
+    volumes:
+      - ./src:/var/www/html
